@@ -7,6 +7,7 @@ import android.util.Log;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -16,6 +17,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PublishSubject<Integer> publishSubject = PublishSubject.create();
+        
+        // It will get 1, 2, 3, 4 and onComplete
+        publishSubject.subscribe(getFirstObserver());
+    
+        publishSubject.onNext(1);
+        publishSubject.onNext(2);
+        publishSubject.onNext(3);
+        
+        // It will get 4 and onComplete for second observer also.
+        publishSubject.subscribe(getSecondObserver());
+    
+        publishSubject.onNext(4);
+        publishSubject.onComplete();
     }
     
     private Observer<Integer> getFirstObserver() {
@@ -43,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         return firstObserver;
     }
     
-    private Observer<Integer> getSecondObserber() {
+    private Observer<Integer> getSecondObserver() {
         Observer<Integer> secondObserver = new Observer<Integer>() {
             @Override
             public void onSubscribe(Disposable d) {
